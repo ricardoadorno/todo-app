@@ -1,0 +1,210 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Priority {
+  URGENT_IMPORTANT
+  IMPORTANT_NOT_URGENT
+  URGENT_NOT_IMPORTANT
+  NOT_URGENT_NOT_IMPORTANT
+}
+
+enum Recurrence {
+  NONE
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum TaskCategory {
+  FINANCIAL
+  HEALTH
+  PERSONAL
+  WORK
+  LEARNING
+  HOME
+  OTHER
+}
+
+enum HabitProgressStatus {
+  DONE
+  SKIPPED
+  MISSED
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum GoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum GoalCategory {
+  PERSONAL
+  FINANCIAL
+  HEALTH
+  CAREER
+  LEARNING
+  OTHER
+}
+
+enum InvestmentType {
+  STOCK
+  CRYPTO
+  FUND
+  REAL_ESTATE
+  OTHER
+}
+
+// Models
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tasks         Task[]
+  habits        Habit[]
+  transactions  Transaction[]
+  goals         Goal[]
+  investments   Investment[]
+
+  @@map("users")
+}
+
+model Task {
+  id                   String       @id @default(cuid())
+  name                 String
+  description          String?
+  priority             Priority
+  dueDate              DateTime?
+  repetitionsRequired  Int          @default(1)
+  repetitionsCompleted Int          @default(0)
+  category             TaskCategory
+  recurrence           Recurrence   @default(NONE)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
+
+model Habit {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  streak      Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userId   String
+  user     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  progress HabitDayProgress[]
+
+  @@map("habits")
+}
+
+model HabitDayProgress {
+  id     String              @id @default(cuid())
+  date   DateTime            @db.Date
+  status HabitProgressStatus
+
+  // Relations
+  habitId String
+  habit   Habit  @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+  @@map("habit_day_progress")
+}
+
+model Transaction {
+  id                  String          @id @default(cuid())
+  type                TransactionType
+  amount              Decimal         @db.Decimal(10, 2)
+  date                DateTime
+  description         String
+  category            String?
+  isRecurring         Boolean         @default(false)
+  recurrenceInterval  Recurrence?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+model Goal {
+  id           String       @id @default(cuid())
+  name         String
+  description  String?
+  category     GoalCategory
+  targetDate   DateTime?
+  status       GoalStatus   @default(NOT_STARTED)
+  currentValue Decimal?     @db.Decimal(10, 2)
+  targetValue  Decimal?     @db.Decimal(10, 2)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  // Relations
+  userId   String
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subTasks SubTask[]
+
+  @@map("goals")
+}
+
+model SubTask {
+  id        String   @id @default(cuid())
+  name      String
+  completed Boolean  @default(false)
+
+  // Relations
+  goalId String
+  goal   Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@map("sub_tasks")
+}
+
+model Investment {
+  id            String         @id @default(cuid())
+  name          String
+  type          InvestmentType
+  quantity      Decimal?       @db.Decimal(15, 8)
+  purchasePrice Decimal?       @db.Decimal(10, 2)
+  currentValue  Decimal        @db.Decimal(10, 2)
+  purchaseDate  DateTime
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("investments")
+}
