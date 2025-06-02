@@ -72,6 +72,15 @@ enum InvestmentType {
   OTHER
 }
 
+enum MeasurementType {
+  WEIGHT
+  BLOOD_PRESSURE
+  HEART_RATE
+  SLEEP_HOURS
+  WATER_INTAKE
+  OTHER
+}
+
 // Models
 model User {
   id        String   @id @default(cuid())
@@ -81,11 +90,15 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  tasks         Task[]
-  habits        Habit[]
-  transactions  Transaction[]
-  goals         Goal[]
-  investments   Investment[]
+  tasks           Task[]
+  habits          Habit[]
+  transactions    Transaction[]
+  goals           Goal[]
+  investments     Investment[]
+  healthMeasurements HealthMeasurement[]
+  exercises       Exercise[]
+  dietPlans       DietPlan[]
+  workoutPlans    WorkoutPlan[]
 
   @@map("users")
 }
@@ -207,4 +220,70 @@ model Investment {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("investments")
+}
+
+model HealthMeasurement {
+  id        String          @id @default(cuid())
+  type      MeasurementType
+  value     String          // Armazenamos como string para flexibilidade
+  unit      String?
+  date      DateTime
+  notes     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  // Relations
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("health_measurements")
+}
+
+model Exercise {
+  id             String   @id @default(cuid())
+  name           String
+  duration       Int      // em minutos
+  caloriesBurned Int?
+  date           DateTime
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("exercises")
+}
+
+model DietPlan {
+  id         String    @id @default(cuid())
+  content    String
+  startDate  DateTime
+  endDate    DateTime?
+  notes      String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("diet_plans")
+}
+
+model WorkoutPlan {
+  id         String    @id @default(cuid())
+  content    String
+  startDate  DateTime
+  endDate    DateTime?
+  notes      String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("workout_plans")
 }

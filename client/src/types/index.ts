@@ -1,4 +1,3 @@
-
 export type Priority = 
   | 'URGENT_IMPORTANT'    // Fazer Primeiro
   | 'IMPORTANT_NOT_URGENT'// Agendar
@@ -94,4 +93,68 @@ export interface Investment {
   notes?: string;
   createdAt?: string; // ISO string
   updatedAt?: string; // ISO string
+}
+
+// Tipos para Overview Financeiro
+export interface FinancialOverview {
+  totalIncome: number;
+  totalExpenses: number;  balance: number;
+  recentTransactions: Transaction[];
+  monthlyData?: {
+    month: string;
+    income: number;
+    expenses: number;
+  }[];
+}
+
+// Tipos para Health (Saúde)
+export type MeasurementType = 'WEIGHT' | 'BLOOD_PRESSURE' | 'HEART_RATE' | 'SLEEP_HOURS' | 'WATER_INTAKE' | 'OTHER';
+
+export interface HealthMeasurement {
+  id: string;
+  type: MeasurementType;
+  value: number | string;
+  unit?: string;
+  date: string; // ISO string
+  notes?: string;
+  createdAt?: string; // ISO string
+  updatedAt?: string; // ISO string
+}
+
+export interface Exercise {
+  id: string;
+  name: string;
+  duration: number; // em minutos
+  caloriesBurned?: number;
+  date: string; // ISO string
+  notes?: string;
+  createdAt?: string; // ISO string
+  updatedAt?: string; // ISO string
+}
+
+export interface DietPlan {
+  id: string;
+  content: string; // conteúdo markdown do plano de dieta
+  startDate: string; // ISO string
+  endDate?: string; // ISO string
+  notes?: string;
+  createdAt?: string; // ISO string
+  updatedAt?: string; // ISO string
+}
+
+export interface WorkoutPlan {
+  id: string;
+  content: string; // conteúdo markdown do plano de treino
+  startDate: string; // ISO string
+  endDate?: string; // ISO string
+  notes?: string;
+  createdAt?: string; // ISO string
+  updatedAt?: string; // ISO string
+}
+
+export interface HealthData {
+  measurements: HealthMeasurement[];
+  exercises: Exercise[];
+  currentDietPlan?: DietPlan;
+  currentWorkoutPlan?: WorkoutPlan;
 }

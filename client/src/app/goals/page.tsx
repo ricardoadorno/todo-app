@@ -3,7 +3,7 @@
 import AppLayout from "@/components/layout/app-layout";
 import { useState, useEffect } from "react";
 import type { Goal, GoalCategory, GoalStatus, SubTask } from "@/types";
-import { useGetGoals, useAddGoal, useUpdateGoal, useDeleteGoal } from "@/lib/api-client";
+import { useGetGoals, useAddGoal, useUpdateGoal, useDeleteGoal } from "@/services/goal-service";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Edit, Trash2, CheckCircle, Circle, ListChecks, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";

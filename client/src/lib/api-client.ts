@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Task, Habit, Transaction, Goal, Investment, HabitDayProgress } from '@/types';
+import type { Task, Habit, Transaction, Goal, Investment, HabitDayProgress, FinancialOverview } from '@/types';
 
 // Mock user ID para desenvolvimento - em produção viria da autenticação
-export const MOCK_USER_ID = "usr_fluxo_rotina_axb345cz_dev001";
+export const MOCK_USER_ID = "cmbe9lk520000w2asjjj1fhxw";
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3000/api', // Backend NestJS na porta 3001 com prefixo /api
+  baseURL: 'http://localhost:3001/api', // Backend NestJS na porta 3001 com prefixo /api
   headers: {
     'Content-Type': 'application/json',
   },
@@ -169,7 +169,7 @@ export const useGetTransactions = (userId: string = MOCK_USER_ID) => {
 };
 
 export const useGetFinancialOverview = (userId: string = MOCK_USER_ID, monthsBack: number = 6) => {
-  return useQuery<any, Error>({
+  return useQuery<FinancialOverview, Error>({
     queryKey: ['transactions', 'overview', userId, monthsBack],
     queryFn: async () => {
       const { data } = await apiClient.get(`/transactions/overview?userId=${userId}&monthsBack=${monthsBack}`);

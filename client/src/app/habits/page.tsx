@@ -4,7 +4,7 @@
 import AppLayout from "@/components/layout/app-layout";
 import { useState, useEffect, useMemo } from "react";
 import type { Habit, HabitDayProgress, HabitProgressStatus } from "@/types";
-import { useGetHabits, useAddHabit, useUpdateHabit, useDeleteHabit } from "@/lib/api-client";
+import { useGetHabits, useAddHabit, useUpdateHabit, useDeleteHabit, useUpdateHabitProgress } from "@/services/habit-service";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

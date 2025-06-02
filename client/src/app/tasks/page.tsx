@@ -3,7 +3,7 @@
 import AppLayout from "@/components/layout/app-layout";
 import { useState, useEffect, useMemo } from "react";
 import type { Task, Priority, Recurrence, TaskCategory } from "@/types";
-import { useGetTasks, useAddTask, useUpdateTask, useDeleteTask } from "@/lib/api-client";
+import { useGetTasks, useAddTask, useUpdateTask, useDeleteTask } from "@/services/task-service";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Edit, Trash2, ListChecks, ChevronLeft, ChevronRight, Tag, Check, CalendarDays, Archive, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";

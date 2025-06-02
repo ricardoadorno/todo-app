@@ -1,13 +1,13 @@
 
 "use client";
-import type { Transaction } from "@/types";
+import type { Transaction, FinancialOverview as FinancialOverviewData } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { DollarSign, TrendingUp, TrendingDown } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 interface FinancialOverviewProps {
-  overview?: any;
+  overview?: FinancialOverviewData;
   isLoading?: boolean;
 }
 
@@ -65,9 +65,8 @@ export default function FinancialOverview({ overview, isLoading = false }: Finan
         <Button variant="ghost" size="sm" asChild>
           <Link href="/finances">Ver Tudo</Link>
         </Button>
-      </CardHeader>
-      <CardContent>
-        <div className="text-3xl font-bold text-foreground">R${balance.toFixed(2)}</div>
+      </CardHeader>      <CardContent>
+        <div className="text-3xl font-bold text-foreground">R${(typeof balance === 'number' ? balance : Number(balance) || 0).toFixed(2)}</div>
         <p className="text-xs text-muted-foreground mb-4">Saldo Atual</p>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -75,28 +74,26 @@ export default function FinancialOverview({ overview, isLoading = false }: Finan
             <TrendingUp className="h-5 w-5 text-green-600 mr-2" />
             <div>
               <p className="text-xs text-green-700">Receita Total</p>
-              <p className="text-sm font-semibold text-green-600">R${totalIncome.toFixed(2)}</p>
+              <p className="text-sm font-semibold text-green-600">R${(typeof totalIncome === 'number' ? totalIncome : Number(totalIncome) || 0).toFixed(2)}</p>
             </div>
           </div>
           <div className="flex items-center p-2 rounded-md bg-red-500/10">
             <TrendingDown className="h-5 w-5 text-red-600 mr-2" />
             <div>
               <p className="text-xs text-red-700">Despesa Total</p>
-              <p className="text-sm font-semibold text-red-600">R${totalExpenses.toFixed(2)}</p>
+              <p className="text-sm font-semibold text-red-600">R${(typeof totalExpenses === 'number' ? totalExpenses : Number(totalExpenses) || 0).toFixed(2)}</p>
             </div>
           </div>
         </div>
 
-        <h3 className="text-sm font-medium mb-2">Transações Recentes</h3>
-        {recentTransactions.length > 0 ? (
+        <h3 className="text-sm font-medium mb-2">Transações Recentes</h3>        {recentTransactions.length > 0 ? (
           <ul className="space-y-2">
-            {recentTransactions.map(t => (
-              <li key={t.id} className="flex justify-between items-center text-xs p-2 rounded bg-muted/50">
-                <span>{t.description}</span>
-                <span className={t.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-                  {t.type === 'income' ? '+' : '-'}R${t.amount.toFixed(2)}
-                </span>
-              </li>
+            {recentTransactions.map(t => (<li key={t.id} className="flex justify-between items-center text-xs p-2 rounded bg-muted/50">
+              <span>{t.description}</span>
+              <span className={t.type === 'INCOME' ? 'text-green-600' : 'text-red-600'}>
+                {t.type === 'INCOME' ? '+' : '-'}R${(typeof t.amount === 'number' ? t.amount : Number(t.amount) || 0).toFixed(2)}
+              </span>
+            </li>
             ))}
           </ul>
         ) : (
