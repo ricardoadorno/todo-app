@@ -8,30 +8,40 @@ import {
   Delete,
   Query,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { TransactionsService } from './transactions.service';
 import {
   CreateTransactionDto,
   UpdateTransactionDto,
 } from './dto/transaction.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserId } from '../auth/decorators/user.decorator';
 
 @Controller('transactions')
+@ApiTags('transactions')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  create(
+    @Body(ValidationPipe) createTransactionDto: CreateTransactionDto,
+    @UserId() userId: string,
+  ) {
+    return this.transactionsService.create({ ...createTransactionDto, userId });
   }
 
   @Get()
-  findAll(@Query('userId') userId: string) {
+  findAll(@UserId() userId: string) {
     return this.transactionsService.findAll(userId);
   }
 
   @Get('overview')
   getFinancialOverview(
-    @Query('userId') userId: string,
+    @UserId() userId: string,
     @Query('monthsBack') monthsBack?: string,
   ) {
     const months = monthsBack ? parseInt(monthsBack, 10) : 6;
@@ -39,14 +49,14 @@ export class TransactionsController {
   }
 
   @Get('recurring')
-  getRecurringTransactions(@Query('userId') userId: string) {
+  getRecurringTransactions(@UserId() userId: string) {
     return this.transactionsService.getRecurringTransactions(userId);
   }
 
   @Get('type/:type')
   findByType(
     @Param('type') type: 'INCOME' | 'EXPENSE',
-    @Query('userId') userId: string,
+    @UserId() userId: string,
   ) {
     return this.transactionsService.findByType(userId, type);
   }

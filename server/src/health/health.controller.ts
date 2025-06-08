@@ -8,11 +8,11 @@ import {
   Delete,
   Query,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
-  ApiResponse,
   ApiParam,
   ApiQuery,
   ApiBearerAuth,
@@ -28,18 +28,20 @@ import {
   CreateWorkoutPlanDto,
   UpdateWorkoutPlanDto,
 } from './dto/health.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserId } from '../auth/decorators/user.decorator';
 
 @Controller('health')
 @ApiTags('Health')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
 
   // Health Dashboard endpoint
   @Get()
   @ApiOperation({ summary: 'Get health dashboard data' })
-  @ApiQuery({ name: 'userId', required: true })
-  async getHealthData(@Query('userId') userId: string) {
+  async getHealthData(@UserId() userId: string) {
     return this.healthService.getHealthData(userId);
   }
 

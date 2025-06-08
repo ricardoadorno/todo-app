@@ -158,3 +158,31 @@ export interface HealthData {
   currentDietPlan?: DietPlan;
   currentWorkoutPlan?: WorkoutPlan;
 }
+
+// Auth Types
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  token: string | null;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData extends LoginCredentials {
+  name: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  user: User;
+}

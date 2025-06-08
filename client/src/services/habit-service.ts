@@ -1,15 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Habit, HabitDayProgress } from '@/types';
-import apiClient, { MOCK_USER_ID } from '@/lib/api';
+import apiClient from '@/lib/api';
 
 /**
  * Hook para buscar todos os hábitos do usuário
  */
-export const useGetHabits = (userId: string = MOCK_USER_ID) => {
+export const useGetHabits = () => {
   return useQuery<Habit[], Error>({
-    queryKey: ['habits', userId],
+    queryKey: ['habits'],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/habits?userId=${userId}`);
+      const { data } = await apiClient.get('/habits');
       return data;
     },
   });
@@ -18,11 +18,11 @@ export const useGetHabits = (userId: string = MOCK_USER_ID) => {
 /**
  * Hook para buscar hábitos ativos do usuário
  */
-export const useGetActiveHabits = (userId: string = MOCK_USER_ID, limit: number = 10) => {
+export const useGetActiveHabits = (limit: number = 10) => {
   return useQuery<Habit[], Error>({
-    queryKey: ['habits', 'active', userId, limit],
+    queryKey: ['habits', 'active', limit],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/habits/active?userId=${userId}&limit=${limit}`);
+      const { data } = await apiClient.get(`/habits/active?limit=${limit}`);
       return data;
     },
   });
@@ -37,7 +37,6 @@ export const useAddHabit = () => {
     mutationFn: async (newHabit) => {
       const habitData = {
         ...newHabit,
-        userId: MOCK_USER_ID,
       };
       const { data } = await apiClient.post('/habits', habitData);
       return data;
@@ -55,7 +54,7 @@ export const useUpdateHabit = () => {
   const queryClient = useQueryClient();
   return useMutation<Habit, Error, Habit>({
     mutationFn: async (updatedHabit) => {
-      const { data } = await apiClient.patch(`/habits/${updatedHabit.id}?userId=${MOCK_USER_ID}`, updatedHabit);
+      const { data } = await apiClient.patch(`/habits/${updatedHabit.id}`, updatedHabit);
       return data;
     },
     onSuccess: () => {
@@ -71,7 +70,7 @@ export const useDeleteHabit = () => {
   const queryClient = useQueryClient();
   return useMutation<void, Error, string>({
     mutationFn: async (habitId) => {
-      await apiClient.delete(`/habits/${habitId}?userId=${MOCK_USER_ID}`);
+      await apiClient.delete(`/habits/${habitId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['habits'] });

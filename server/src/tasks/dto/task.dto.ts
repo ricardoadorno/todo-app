@@ -93,13 +93,6 @@ export class CreateTaskDto {
   @IsOptional()
   @IsEnum(Recurrence)
   recurrence?: Recurrence;
-
-  @ApiProperty({
-    description: 'ID of the user who owns this task',
-    example: 'abc123xyz',
-  })
-  @IsString()
-  userId: string;
 }
 
 export class UpdateTaskDto {

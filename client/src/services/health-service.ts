@@ -1,15 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { HealthData, HealthMeasurement, Exercise, DietPlan, WorkoutPlan } from '@/types';
-import apiClient, { MOCK_USER_ID } from '@/lib/api';
+import apiClient from '@/lib/api';
 
 /**
  * Hook para buscar todos os dados de saúde do usuário
  */
-export const useGetHealthData = (userId: string = MOCK_USER_ID) => {
+export const useGetHealthData = () => {
   return useQuery<HealthData, Error>({
-    queryKey: ['health', userId],
+    queryKey: ['health'],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/health?userId=${userId}`);
+      const { data } = await apiClient.get('/health');
       return data;
     },
   });
@@ -24,7 +24,6 @@ export const useAddHealthMeasurement = () => {
     mutationFn: async (newMeasurement) => {
       const { data } = await apiClient.post('/health/measurements', {
         ...newMeasurement,
-        userId: MOCK_USER_ID,
         date: newMeasurement.date ? new Date(newMeasurement.date) : new Date(),
       });
       return data;
@@ -44,7 +43,6 @@ export const useAddExercise = () => {
     mutationFn: async (newExercise) => {
       const { data } = await apiClient.post('/health/exercises', {
         ...newExercise,
-        userId: MOCK_USER_ID,
         date: newExercise.date ? new Date(newExercise.date) : new Date(),
       });
       return data;
@@ -58,11 +56,11 @@ export const useAddExercise = () => {
 /**
  * Hook para buscar o plano de dieta atual
  */
-export const useGetCurrentDietPlan = (userId: string = MOCK_USER_ID) => {
+export const useGetCurrentDietPlan = () => {
   return useQuery<DietPlan, Error>({
-    queryKey: ['health', 'diet-plan', userId],
+    queryKey: ['health', 'diet-plan'],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/health/diet-plan?userId=${userId}&current=true`);
+      const { data } = await apiClient.get('/health/diet-plan?current=true');
       return data;
     },
   });
@@ -77,7 +75,6 @@ export const useUpdateDietPlan = () => {
     mutationFn: async (dietPlan) => {
       const { data } = await apiClient.post('/health/diet-plan', {
         ...dietPlan,
-        userId: MOCK_USER_ID,
         startDate: dietPlan.startDate ? new Date(dietPlan.startDate) : new Date(),
         endDate: dietPlan.endDate ? new Date(dietPlan.endDate) : null,
       });
@@ -92,11 +89,11 @@ export const useUpdateDietPlan = () => {
 /**
  * Hook para buscar o plano de treino atual
  */
-export const useGetCurrentWorkoutPlan = (userId: string = MOCK_USER_ID) => {
+export const useGetCurrentWorkoutPlan = () => {
   return useQuery<WorkoutPlan, Error>({
-    queryKey: ['health', 'workout-plan', userId],
+    queryKey: ['health', 'workout-plan'],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/health/workout-plan?userId=${userId}&current=true`);
+      const { data } = await apiClient.get('/health/workout-plan?current=true');
       return data;
     },
   });
@@ -111,7 +108,6 @@ export const useUpdateWorkoutPlan = () => {
     mutationFn: async (workoutPlan) => {
       const { data } = await apiClient.post('/health/workout-plan', {
         ...workoutPlan,
-        userId: MOCK_USER_ID,
         startDate: workoutPlan.startDate ? new Date(workoutPlan.startDate) : new Date(),
         endDate: workoutPlan.endDate ? new Date(workoutPlan.endDate) : null,
       });
@@ -136,7 +132,6 @@ export const useAddSleepRecord = () => {
         unit: 'hours',
         date: sleepData.date ? new Date(sleepData.date) : new Date(),
         notes: sleepData.notes,
-        userId: MOCK_USER_ID,
       });
       return data;
     },

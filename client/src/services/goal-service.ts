@@ -1,15 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Goal } from '@/types';
-import apiClient, { MOCK_USER_ID } from '@/lib/api';
+import apiClient from '@/lib/api';
 
 /**
  * Hook para buscar todas as metas do usuário
  */
-export const useGetGoals = (userId: string = MOCK_USER_ID) => {
+export const useGetGoals = () => {
   return useQuery<Goal[], Error>({
-    queryKey: ['goals', userId],
+    queryKey: ['goals'],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/goals?userId=${userId}`);
+      const { data } = await apiClient.get('/goals');
       return data;
     },
   });
@@ -18,11 +18,11 @@ export const useGetGoals = (userId: string = MOCK_USER_ID) => {
 /**
  * Hook para buscar metas em progresso
  */
-export const useGetGoalsInProgress = (userId: string = MOCK_USER_ID, limit: number = 5) => {
+export const useGetGoalsInProgress = (limit: number = 5) => {
   return useQuery<Goal[], Error>({
-    queryKey: ['goals', 'in-progress', userId, limit],
+    queryKey: ['goals', 'in-progress', limit],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/goals/in-progress?userId=${userId}&limit=${limit}`);
+      const { data } = await apiClient.get(`/goals/in-progress?limit=${limit}`);
       return data;
     },
   });
@@ -37,7 +37,6 @@ export const useAddGoal = () => {
     mutationFn: async (newGoal) => {
       const goalData = {
         ...newGoal,
-        userId: MOCK_USER_ID,
         targetDate: newGoal.targetDate ? new Date(newGoal.targetDate) : null,
       };
       const { data } = await apiClient.post('/goals', goalData);
@@ -60,7 +59,7 @@ export const useUpdateGoal = () => {
         ...updatedGoal,
         targetDate: updatedGoal.targetDate ? new Date(updatedGoal.targetDate) : null,
       };
-      const { data } = await apiClient.patch(`/goals/${updatedGoal.id}?userId=${MOCK_USER_ID}`, goalData);
+      const { data } = await apiClient.patch(`/goals/${updatedGoal.id}`, goalData);
       return data;
     },
     onSuccess: () => {
@@ -76,7 +75,7 @@ export const useDeleteGoal = () => {
   const queryClient = useQueryClient();
   return useMutation<void, Error, string>({
     mutationFn: async (goalId) => {
-      await apiClient.delete(`/goals/${goalId}?userId=${MOCK_USER_ID}`);
+      await apiClient.delete(`/goals/${goalId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });

@@ -8,43 +8,53 @@ import {
   Delete,
   Query,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { InvestmentsService } from './investments.service';
 import { CreateInvestmentDto, UpdateInvestmentDto } from './dto/investment.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserId } from '../auth/decorators/user.decorator';
 
 @Controller('investments')
+@ApiTags('investments')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class InvestmentsController {
   constructor(private readonly investmentsService: InvestmentsService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createInvestmentDto: CreateInvestmentDto) {
-    return this.investmentsService.create(createInvestmentDto);
+  create(
+    @Body(ValidationPipe) createInvestmentDto: CreateInvestmentDto,
+    @UserId() userId: string,
+  ) {
+    return this.investmentsService.create({ ...createInvestmentDto, userId });
   }
 
   @Get()
-  findAll(@Query('userId') userId: string) {
+  findAll(@UserId() userId: string) {
     return this.investmentsService.findAll(userId);
   }
 
   @Get('portfolio-summary')
-  getPortfolioSummary(@Query('userId') userId: string) {
+  getPortfolioSummary(@UserId() userId: string) {
     return this.investmentsService.getPortfolioSummary(userId);
   }
 
   @Get('type/:type')
-  findByType(@Param('type') type: string, @Query('userId') userId: string) {
+  findByType(@Param('type') type: string, @UserId() userId: string) {
     return this.investmentsService.findByType(userId, type);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Query('userId') userId: string) {
+  findOne(@Param('id') id: string, @UserId() userId: string) {
     return this.investmentsService.findOne(id, userId);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Query('userId') userId: string,
+    @UserId() userId: string,
     @Body(ValidationPipe) updateInvestmentDto: UpdateInvestmentDto,
   ) {
     return this.investmentsService.update(id, userId, updateInvestmentDto);

@@ -1,16 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateTaskDto, UpdateTaskDto } from './dto/task.dto';
+import {
+  CreateTaskDto,
+  UpdateTaskDto,
+  TaskCategory,
+  Priority,
+} from './dto/task.dto';
 import { Task } from '@prisma/client';
 
 @Injectable()
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+  async create(createTaskDto: CreateTaskDto, userId: string): Promise<Task> {
     return this.prisma.task.create({
       data: {
         ...createTaskDto,
+        userId,
         repetitionsRequired: createTaskDto.repetitionsRequired || 1,
         recurrence: createTaskDto.recurrence || 'NONE',
       },
@@ -68,16 +74,19 @@ export class TasksService {
     });
   }
 
-  async findByCategory(userId: string, category: string): Promise<Task[]> {
+  async findByCategory(
+    userId: string,
+    category: TaskCategory,
+  ): Promise<Task[]> {
     return this.prisma.task.findMany({
-      where: { userId, category: category as any },
+      where: { userId, category },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findByPriority(userId: string, priority: string): Promise<Task[]> {
+  async findByPriority(userId: string, priority: Priority): Promise<Task[]> {
     return this.prisma.task.findMany({
-      where: { userId, priority: priority as any },
+      where: { userId, priority },
       orderBy: { createdAt: 'desc' },
     });
   }
