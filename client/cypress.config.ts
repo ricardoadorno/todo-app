@@ -1,12 +1,25 @@
 import { defineConfig } from "cypress";
+import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
+import { createEsbuildPlugin } from "@badeball/cypress-cucumber-preprocessor/esbuild";
+import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
 
 export default defineConfig({
   e2e: {
-    baseUrl: "http://localhost:3000", // Adjust if your app runs on a different port
-    specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+    baseUrl: "http://localhost:3000",
+    specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.ts",
-    setupNodeEvents(on, config) {
+    async setupNodeEvents(on, config) {
       // implement node event listeners here
+      await addCucumberPreprocessorPlugin(on, config);
+
+      on(
+        "file:preprocessor",
+        createBundler({
+          plugins: [createEsbuildPlugin(config)],
+        })
+      );
+
+      return config;
     },
   },
   component: {

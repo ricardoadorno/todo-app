@@ -6,5 +6,7 @@ declare namespace Cypress {
     login(email?: string, password?: string): Chainable<string | null>;
     createTestUser(userData?: any): Chainable<any>;
     authenticatedRequest(options: Partial<Cypress.RequestOptions>): Chainable<Cypress.Response<any>>;
+    setupBDDTest(): Chainable<void>;
+    cleanupBDDTest(): Chainable<void>;
   }
 }

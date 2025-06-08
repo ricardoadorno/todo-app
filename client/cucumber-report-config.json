@@ -1,0 +1,31 @@
+{
+  "reportOptions": {
+    "brandTitle": "Routine Flow - Relatórios BDD",
+    "theme": "bootstrap",
+    "jsonFile": "cypress/reports/cucumber-json/cucumber-report.json",
+    "output": "cypress/reports/html/cucumber-report.html",
+    "reportSuiteAsScenarios": true,
+    "scenarioTimestamp": true,
+    "launchReport": false,
+    "metadata": {
+      "browser": {
+        "name": "chrome",
+        "version": "latest"
+      },
+      "device": "Local Machine",
+      "platform": {
+        "name": "Windows",
+        "version": "10"
+      }
+    },
+    "customData": {
+      "title": "Informações da Execução",
+      "data": [
+        {"label": "Projeto", "value": "Routine Flow"},
+        {"label": "Versão", "value": "1.0.0"},
+        {"label": "Ambiente", "value": "Test"},
+        {"label": "Executado por", "value": "Equipe QA"}
+      ]
+    }
+  }
+}

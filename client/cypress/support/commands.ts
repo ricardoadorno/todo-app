@@ -9,7 +9,31 @@
 // ***********************************************************
 
 // Import the type definitions
-import './commands-types';
+import './commands-types.d.ts';
+
+// BDD Setup Commands
+Cypress.Commands.add('setupBDDTest', () => {
+  // Limpar dados anteriores
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.window().then((win) => {
+    win.sessionStorage.clear();
+  });
+  
+  // Configurar ambiente de teste
+  Cypress.env('testMode', 'bdd');
+});
+
+Cypress.Commands.add('cleanupBDDTest', () => {
+  // Limpeza após testes BDD
+  const testUserId = Cypress.env('testUserId');
+  const authToken = Cypress.env('authToken');
+  
+  if (testUserId && authToken) {
+    // Opcional: limpar dados de teste criados
+    cy.log('Cleaning up BDD test data');
+  }
+});
 
 // Comando para fazer login e obter um token de autenticação
 Cypress.Commands.add('login', (email = 'test@example.com', password = 'password123') => {
@@ -64,3 +88,4 @@ Cypress.Commands.add('authenticatedRequest', (options) => {
       Authorization: token ? `Bearer ${token}` : undefined
     }
   });
+});
